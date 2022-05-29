@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/ntcat/ezfasthttp/client"
 	"strconv"
+
+	"github.com/ntcat/ezfasthttp/client"
 )
 
 func main() {
@@ -38,7 +39,12 @@ type Longhu struct {
 	Turnover  float64 `gorm:"column:turnover" json:"turnover"`     // 换手率
 }
 
-func dataMapPrase(dMap map[string]interface{}) (result []interface{}, err error) {
+// func bodyHandle(bodyIn client.BodyType) (bodyOut client.BodyType, err error) {
+// 	bodyOut = bodyIn
+// 	return
+// }
+
+func dataMapPrase(dMap client.DataMapType) (result []any, err error) {
 	var lh Longhu
 	if dMap != nil {
 		date := dMap["date"].(string)

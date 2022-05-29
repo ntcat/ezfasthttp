@@ -1,8 +1,8 @@
 package client
 
-func (f *FastClient) GetJsonDo(bodyHandle func([]byte) (body []byte, err error),
-	praseJsonCustomHandle func([]byte) (map[string]interface{}, error),
-	dataMapHandle func(map[string]interface{}) ([]interface{}, error)) (result []interface{}, err error) {
+func (f *FastClient) GetJsonDo(bodyHandle func(BodyType) (body BodyType, err error),
+	praseJsonCustomHandle func(BodyType) (DataMapType, error),
+	dataMapHandle func(DataMapType) ([]any, error)) (result []any, err error) {
 	if err = f.RequestGet(); err != nil {
 		return nil, err
 	}

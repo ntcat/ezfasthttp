@@ -48,7 +48,7 @@ func (f *FastClient) RequestPostJson(jsonBody string) error {
 	return nil
 }
 
-func PraseJsonCommonHandle(body []byte) (dataMap map[string]interface{}, err error) {
+func PraseJsonCommonHandle(body BodyType) (dataMap DataMapType, err error) {
 	var r ResJson
 	var json = jsoniter.ConfigCompatibleWithStandardLibrary
 	if err = json.Unmarshal(body, &r); err != nil {
@@ -59,7 +59,7 @@ func PraseJsonCommonHandle(body []byte) (dataMap map[string]interface{}, err err
 		err = fmt.Errorf("r.Code=%d,r.Msg=%s", r.Code, r.Msg)
 	} else {
 		if r.Data != nil {
-			dataMap = (r.Data).(map[string]interface{})
+			dataMap = (r.Data).(DataMapType)
 		}
 	}
 	return

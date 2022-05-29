@@ -5,8 +5,8 @@ import "time"
 type FastClient struct {
 	url     string
 	timeout time.Duration
-	body    []byte
-	dataMap map[string]interface{}
+	body    BodyType
+	dataMap DataMapType
 }
 
 type ResJson struct {
@@ -34,10 +34,10 @@ func (f *FastClient) SetUrl(url string) {
 	f.url = url
 }
 
-func (f *FastClient) GetBody() []byte {
+func (f *FastClient) GetBody() BodyType {
 	return f.body
 }
-func (f *FastClient) SetBody(body []byte) {
+func (f *FastClient) SetBody(body BodyType) {
 	f.body = body
 }
 func (f *FastClient) GetTimeout() time.Duration {
@@ -46,16 +46,16 @@ func (f *FastClient) GetTimeout() time.Duration {
 func (f *FastClient) SetTimeout(timeout time.Duration) {
 	f.timeout = timeout
 }
-func (f *FastClient) BodyHandle(callback func([]byte) ([]byte, error)) error {
+func (f *FastClient) BodyHandle(callback func(BodyType) (BodyType, error)) error {
 	out, err := callback(f.body)
 	f.body = out
 	return err
 }
-func (f *FastClient) PraseJsonHandle(callback func([]byte) (map[string]interface{}, error)) error {
+func (f *FastClient) PraseJsonHandle(callback func(BodyType) (DataMapType, error)) error {
 	out, err := callback(f.body)
 	f.dataMap = out
 	return err
 }
-func (f *FastClient) DataMapHandle(callback func(map[string]interface{}) ([]interface{}, error)) ([]interface{}, error) {
+func (f *FastClient) DataMapHandle(callback func(DataMapType) ([]any, error)) ([]any, error) {
 	return callback(f.dataMap)
 }
