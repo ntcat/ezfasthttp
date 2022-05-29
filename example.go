@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/ntcat/ezfasthttp/client"
 )
@@ -12,7 +13,12 @@ func main() {
 	theDate := "2022-03-03"
 	url := fmt.Sprintf("https://proxy.finance.qq.com/cgi/cgi-bin/longhubang/lhbDetail?&date=%s", theDate)
 	cli := client.NewFastClient(url)
-	data, err := cli.GetJsonDo(nil, nil, dataMapPrase)
+	var test = "test"
+	data, err := cli.GetJsonDo(func(bodyIn client.BodyType) (client.BodyType, error) {
+		sBody := string(bodyIn)
+		sBody = strings.ReplaceAll(sBody, test, test)
+		return []byte(sBody), nil
+	}, nil, dataMapPrase)
 
 	if err != nil {
 		fmt.Print(err)
@@ -38,11 +44,6 @@ type Longhu struct {
 	TotalAsk  float64 `gorm:"column:total_ask" json:"total_ask"`   // 总卖出
 	Turnover  float64 `gorm:"column:turnover" json:"turnover"`     // 换手率
 }
-
-// func bodyHandle(bodyIn client.BodyType) (bodyOut client.BodyType, err error) {
-// 	bodyOut = bodyIn
-// 	return
-// }
 
 func dataMapPrase(dMap client.DataMapType) (result []any, err error) {
 	var lh Longhu
