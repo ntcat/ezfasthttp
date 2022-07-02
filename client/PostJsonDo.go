@@ -3,7 +3,7 @@ package client
 func (f *FastClient) PostJsonDo(
 	jsonBody string,
 	bodyHandle BodyHandle,
-	dataMapHandle DataMapHandle) (result any, err error) {
+	dataMapHandle DataMapHandle) (result []any, err error) {
 	if err = f.RequestPostJson(jsonBody); err != nil {
 		return nil, err
 	}
@@ -21,7 +21,7 @@ func (f *FastClient) PostJsonDo(
 			return nil, err
 		}
 	} else {
-		result = f.dataMap
+		result = append(result, f.dataMapArray)
 	}
 
 	return result, nil

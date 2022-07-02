@@ -48,7 +48,7 @@ type Longhu struct {
 func dataMapPrase(dataMap any) (result []any, err error) {
 	var lh Longhu
 	if dataMap != nil {
-		dMap := dataMap.(map[string]any)
+		dMap := dataMap.(client.DataMapType)
 		date := dMap["date"].(string)
 		lh.Date = date
 		if dMap["all"] == nil {
