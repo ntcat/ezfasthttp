@@ -64,3 +64,30 @@ func PraseJsonCommonHandle(body BodyType) (dataMap DataMapType, err error) {
 	}
 	return
 }
+
+func PraseJsonArrayCommonHandle(body BodyType) (dataMap []any, err error) {
+	var r ResJsonArray
+	var json = jsoniter.ConfigCompatibleWithStandardLibrary
+	if err = json.Unmarshal(body, &r); err != nil {
+		return
+	}
+
+	if r.Code != 0 {
+		err = fmt.Errorf("r.Code=%d,r.Msg=%s", r.Code, r.Msg)
+	} else {
+		if r.Data != nil {
+			for _, dm := range r.Data {
+				dataMap = append(dataMap, dm.(DataMapType))
+			}
+		}
+	}
+	return
+}
+
+// type PraseJsonFn func(body BodyType) (dataMap DataMapType, err error)
+
+// type PraseJsonFn1 interface {
+// 	PraseJsonCommonHandle(body BodyType) (dataMap DataMapType, err error)
+// 	PraseJsonArrayCommonHandle(body BodyType) (dataMap []any, err error)
+// 	praseJsonCustomHandle(body BodyType) (dataMap []any, err error)
+// }

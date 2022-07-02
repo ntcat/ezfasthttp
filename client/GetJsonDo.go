@@ -1,8 +1,7 @@
 package client
 
-func (f *FastClient) GetJsonDo(bodyHandle func(BodyType) (body BodyType, err error),
-	praseJsonCustomHandle func(BodyType) (DataMapType, error),
-	dataMapHandle func(DataMapType) ([]any, error)) (result []any, err error) {
+func (f *FastClient) GetJsonDo(bodyHandle BodyHandle,
+	dataMapHandle DataMapHandle) (result []any, err error) {
 	if err = f.RequestGet(); err != nil {
 		return nil, err
 	}
@@ -11,12 +10,7 @@ func (f *FastClient) GetJsonDo(bodyHandle func(BodyType) (body BodyType, err err
 			return nil, err
 		}
 	}
-
-	praseJsonFn := PraseJsonCommonHandle
-	if praseJsonCustomHandle != nil {
-		praseJsonFn = praseJsonCustomHandle
-	}
-	if err = f.PraseJsonHandle(praseJsonFn); err != nil {
+	if err = f.PraseJsonHandle(PraseJsonCommonHandle); err != nil {
 		return nil, err
 	}
 
@@ -24,8 +18,33 @@ func (f *FastClient) GetJsonDo(bodyHandle func(BodyType) (body BodyType, err err
 		if result, err = f.DataMapHandle(dataMapHandle); err != nil {
 			return nil, err
 		}
+	} else {
+		result = append(result, f.dataMap)
 	}
 
 	return result, nil
 
+}
+
+func (f *FastClient) GetJsonArrayDo(bodyHandle BodyHandle,
+	dataMapArrayHandle DataMapArrayHandle) (result []any, err error) {
+	if err = f.RequestGet(); err != nil {
+		return nil, err
+	}
+	if bodyHandle != nil {
+		if err = f.BodyHandle(bodyHandle); err != nil {
+			return nil, err
+		}
+	}
+	if err = f.PraseJsonArrayHandle(PraseJsonArrayCommonHandle); err != nil {
+		return nil, err
+	}
+	if dataMapArrayHandle != nil {
+		if result, err = f.DataMapArrayHandle(dataMapArrayHandle); err != nil {
+			return nil, err
+		}
+	} else {
+		result = f.dataMapArray
+	}
+	return result, nil
 }

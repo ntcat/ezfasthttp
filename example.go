@@ -18,7 +18,7 @@ func main() {
 		sBody := string(bodyIn)
 		sBody = strings.ReplaceAll(sBody, test, test)
 		return []byte(sBody), nil
-	}, nil, dataMapPrase)
+	}, dataMapPrase)
 
 	if err != nil {
 		fmt.Print(err)
@@ -45,9 +45,10 @@ type Longhu struct {
 	Turnover  float64 `gorm:"column:turnover" json:"turnover"`     // 换手率
 }
 
-func dataMapPrase(dMap client.DataMapType) (result []any, err error) {
+func dataMapPrase(dataMap any) (result []any, err error) {
 	var lh Longhu
-	if dMap != nil {
+	if dataMap != nil {
+		dMap := dataMap.(map[string]any)
 		date := dMap["date"].(string)
 		lh.Date = date
 		if dMap["all"] == nil {

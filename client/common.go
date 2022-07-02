@@ -3,23 +3,25 @@ package client
 import "time"
 
 type FastClient struct {
-	url     string
-	timeout time.Duration
-	body    BodyType
-	dataMap DataMapType
+	url          string
+	timeout      time.Duration
+	body         BodyType
+	dataMap      any
+	dataMapArray []any
 }
 
 type ResJson struct {
-	Msg  string      `json:"msg"`
-	Code int         `json:"code"`
-	Data interface{} `json:"data"`
+	Msg  string `json:"msg"`
+	Code int    `json:"code"`
+	Data any    `json:"data"`
 }
 
-// type ResJsonArray struct {
-// 	Msg  string        `json:"msg"`
-// 	Code int           `json:"code"`
-// 	Data []interface{} `json:"data"`
-// }
+type ResJsonArray struct {
+	Msg  string `json:"msg"`
+	Code int    `json:"code"`
+	Data []any  `json:"data"`
+}
+
 func NewFastClient(url string) (f *FastClient) {
 	f = &FastClient{}
 	f.SetUrl(url)
@@ -56,6 +58,17 @@ func (f *FastClient) PraseJsonHandle(callback func(BodyType) (DataMapType, error
 	f.dataMap = out
 	return err
 }
-func (f *FastClient) DataMapHandle(callback func(DataMapType) ([]any, error)) ([]any, error) {
+
+func (f *FastClient) DataMapHandle(callback DataMapHandle) ([]any, error) {
 	return callback(f.dataMap)
+}
+
+func (f *FastClient) PraseJsonArrayHandle(callback func(BodyType) ([]any, error)) error {
+	out, err := callback(f.body)
+	f.dataMapArray = out
+	return err
+}
+
+func (f *FastClient) DataMapArrayHandle(callback DataMapArrayHandle) ([]any, error) {
+	return callback(f.dataMapArray)
 }
