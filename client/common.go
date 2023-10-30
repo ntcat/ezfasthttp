@@ -1,9 +1,14 @@
 package client
 
-import "time"
+import (
+	"github.com/valyala/fasthttp"
+	"time"
+)
 
 type FastClient struct {
 	url          string
+	req          *fasthttp.Request
+	resp         *fasthttp.Response
 	timeout      time.Duration
 	body         BodyType
 	dataMap      any
@@ -26,6 +31,8 @@ func NewFastClient(url string) (f *FastClient) {
 	f = &FastClient{}
 	f.SetUrl(url)
 	f.timeout = time.Second * 30
+	f.req = fasthttp.AcquireRequest()
+	f.resp = fasthttp.AcquireResponse()
 	return
 }
 
@@ -35,7 +42,18 @@ func (f *FastClient) GetUrl() string {
 func (f *FastClient) SetUrl(url string) {
 	f.url = url
 }
-
+func (f *FastClient) SetHeadReq(key, value string) {
+	f.req.Header.Set(key, value)
+}
+func (f *FastClient) SetHeadResp(key, value string) {
+	f.resp.Header.Set(key, value)
+}
+func (f *FastClient) SetUserAgent(value string) {
+	f.req.Header.SetUserAgent(value)
+}
+func (f *FastClient) SetCookie(key, value string) {
+	f.req.Header.SetCookie(key, value)
+}
 func (f *FastClient) GetBody() BodyType {
 	return f.body
 }

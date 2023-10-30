@@ -7,12 +7,11 @@ import (
 )
 
 func (f *FastClient) RequestGet() error {
-	req := fasthttp.AcquireRequest()
-	req.SetRequestURI(f.url)
-	req.Header.SetMethod(fasthttp.MethodGet)
+	f.req.SetRequestURI(f.url)
+	f.req.Header.SetMethod(fasthttp.MethodGet)
 	resp := fasthttp.AcquireResponse()
-	err := fasthttp.DoTimeout(req, resp, f.timeout)
-	fasthttp.ReleaseRequest(req)
+	err := fasthttp.DoTimeout(f.req, resp, f.timeout)
+	fasthttp.ReleaseRequest(f.req)
 	status := resp.StatusCode()
 	f.body = resp.Body()
 	if err != nil {
@@ -27,23 +26,21 @@ func (f *FastClient) RequestGet() error {
 }
 
 func (f *FastClient) RequestPostJson(jsonBody string) error {
-	req := fasthttp.AcquireRequest()
-	req.Header.SetMethod(fasthttp.MethodPost)
-	req.Header.SetContentType("application/json")
-	req.SetBodyString(jsonBody)
-	req.SetRequestURI(f.url)
-	resp := fasthttp.AcquireResponse()
-	err := fasthttp.DoTimeout(req, resp, f.timeout)
-	fasthttp.ReleaseRequest(req)
-	status := resp.StatusCode()
-	f.body = resp.Body()
+	f.req.Header.SetMethod(fasthttp.MethodPost)
+	f.req.Header.SetContentType("application/json")
+	f.req.SetBodyString(jsonBody)
+	f.req.SetRequestURI(f.url)
+	err := fasthttp.DoTimeout(f.req, f.resp, f.timeout)
+	fasthttp.ReleaseRequest(f.req)
+	status := f.resp.StatusCode()
+	f.body = f.resp.Body()
 	if err != nil {
 		return err
 	}
 	if status != fasthttp.StatusOK {
 		return fmt.Errorf("request failed,status:%d", status)
 	}
-	fasthttp.ReleaseResponse(resp)
+	fasthttp.ReleaseResponse(f.resp)
 
 	return nil
 }
